@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">
+  <!-- Turquoise leaf -->
+  <path d="M 140 20 Q 160 30 155 55 Q 150 50 145 60 Q 140 35 140 20" fill="#00a9cc"/>
+  <!-- Navy blue leaf -->
+  <path d="M 145 50 Q 165 60 160 85 Q 155 75 150 85 Q 145 65 145 50" fill="#0d4a6d"/>
+  <!-- Text "ברנקו וייס" -->
+  <text x="70" y="55" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0d4a6d" text-anchor="end">ברנקו וייס</text>
+  <text x="70" y="75" font-family="Arial, sans-serif" font-size="12" fill="#00a9cc" text-anchor="end">חינוך משנה חברה</text>
+</svg>
