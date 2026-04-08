@@ -1,3 +1,4 @@
+/* Form Elements */
 const classSelect = document.getElementById('classSelect');
 const teacherName = document.getElementById('teacherName');
 const studentSelect = document.getElementById('studentSelect');
@@ -13,9 +14,51 @@ const message = document.getElementById('message');
 
 let classesData = [];
 
+/* Utility Functions */
+function showMessage(text, type = 'success') {
+  message.textContent = text;
+  message.className = `message show ${type}`;
+  
+  setTimeout(() => {
+    message.classList.remove('show');
+  }, 4000);
+}
+
+function hideMessage() {
+  message.classList.remove('show');
+}
+
+/* Validation Function */
+function validateForm() {
+  const errors = [];
+
+  if (!classSelect.value) {
+    errors.push('יש לבחור כיתה / מחנכת');
+  }
+
+  if (!studentSelect.value || studentSelect.value.trim() === '') {
+    errors.push('יש לבחור תלמיד/ה');
+  }
+
+  if (!dateInput.value) {
+    errors.push('יש להזין תאריך');
+  }
+
+  if (errors.length > 0) {
+    showMessage(errors.join(' • '), 'error');
+    return false;
+  }
+
+  return true;
+}
+
+/* Load Students from JSON */
 function loadStudents() {
   fetch('data/students.json')
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) throw new Error('Network error');
+      return response.json();
+    })
     .then(data => {
       classesData = data.classes;
       classesData.forEach((item, index) => {
@@ -24,22 +67,27 @@ function loadStudents() {
         option.textContent = `${item.className} - ${item.teacherName}`;
         classSelect.appendChild(option);
       });
+      
       if (classesData.length > 0) {
         classSelect.selectedIndex = 0;
         fillTeacherAndStudents();
       }
     })
-    .catch(() => {
-      message.textContent = 'לא נמצא קובץ נתונים. יש לוודא ש- data/students.json קיים.';
-      message.style.color = 'red';
+    .catch(error => {
+      console.error('Error loading students:', error);
+      showMessage('שגיאה בטעינת הנתונים. אנא רענן את הדף.', 'error');
     });
 }
 
+/* Fill Teacher and Students Dropdowns */
 function fillTeacherAndStudents() {
-  const selectedClass = classesData[classSelect.value];
+  const selectedIndex = parseInt(classSelect.value);
+  const selectedClass = classesData[selectedIndex];
+  
   if (!selectedClass) return;
+  
   teacherName.value = selectedClass.teacherName;
-  studentSelect.innerHTML = '';
+  studentSelect.innerHTML = '<option value="">בחר תלמיד/ה</option>';
 
   selectedClass.students.forEach(student => {
     const option = document.createElement('option');
@@ -47,19 +95,36 @@ function fillTeacherAndStudents() {
     option.textContent = student;
     studentSelect.appendChild(option);
   });
+  
+  hideMessage();
 }
 
+/* Get Saved Submissions */
 function getSavedSubmissions() {
-  const raw = localStorage.getItem('studentMappingSubmissions');
-  return raw ? JSON.parse(raw) : [];
+  try {
+    const raw = localStorage.getItem('studentMappingSubmissions');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('Error reading localStorage:', e);
+    return [];
+  }
 }
 
+/* Save Submission to LocalStorage */
 function saveSubmission(submission) {
-  const submissions = getSavedSubmissions();
-  submissions.push(submission);
-  localStorage.setItem('studentMappingSubmissions', JSON.stringify(submissions));
+  try {
+    const submissions = getSavedSubmissions();
+    submissions.push(submission);
+    localStorage.setItem('studentMappingSubmissions', JSON.stringify(submissions));
+    return true;
+  } catch (e) {
+    console.error('Error saving to localStorage:', e);
+    showMessage('שגיאה בשמירת הנתונים', 'error');
+    return false;
+  }
 }
 
+/* Clear Form */
 function clearForm() {
   communicationLevel.value = '1';
   wellbeingLevel.value = 'green';
@@ -67,39 +132,81 @@ function clearForm() {
   alertNote.value = '';
   familyNote.value = '';
   generalNote.value = '';
+  
   if (classesData.length > 0) {
     classSelect.selectedIndex = 0;
     fillTeacherAndStudents();
   }
-  dateInput.value = new Date().toISOString().split('T')[0];
-}
-
-submitBtn.addEventListener('click', () => {
-  const selectedClass = classesData[classSelect.value];
-  const submission = {
-    className: selectedClass.className,
-    teacherName: selectedClass.teacherName,
-    studentName: studentSelect.value,
-    date: dateInput.value || new Date().toISOString().split('T')[0],
-    communicationLevel: communicationLevel.value,
-    wellbeingLevel: wellbeingLevel.value,
-    strengths: strengthNote.value.trim(),
-    alerts: alertNote.value.trim(),
-    familyStatus: familyNote.value.trim(),
-    notes: generalNote.value.trim(),
-    savedAt: new Date().toISOString()
-  };
-
-  saveSubmission(submission);
-  message.textContent = 'המידע נשמר בהצלחה!';
-  message.style.color = '#1868b7';
-  clearForm();
-});
-
-classSelect.addEventListener('change', fillTeacherAndStudents);
-
-document.addEventListener('DOMContentLoaded', () => {
+  
   const today = new Date().toISOString().split('T')[0];
   dateInput.value = today;
+}
+
+/* Handle Form Submission */
+submitBtn.addEventListener('click', (event) => {
+  event.preventDefault();
+  
+  /* Validate form */
+  if (!validateForm()) {
+    return;
+  }
+
+  /* Disable button and show loading state */
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = 'שמירה...';
+
+  try {
+    const selectedIndex = parseInt(classSelect.value);
+    const selectedClass = classesData[selectedIndex];
+    
+    const submission = {
+      id: Date.now(),
+      className: selectedClass.className,
+      teacherName: selectedClass.teacherName,
+      studentName: studentSelect.value,
+      date: dateInput.value,
+      communicationLevel: communicationLevel.value,
+      wellbeingLevel: wellbeingLevel.value,
+      strengths: strengthNote.value.trim(),
+      alerts: alertNote.value.trim(),
+      familyStatus: familyNote.value.trim(),
+      notes: generalNote.value.trim(),
+      savedAt: new Date().toISOString()
+    };
+
+    const success = saveSubmission(submission);
+    
+    if (success) {
+      showMessage('המידע נשמר בהצלחה! ✓', 'success');
+      clearForm();
+      
+      /* Re-enable button after a brief delay */
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }, 1500);
+    } else {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  } catch (error) {
+    console.error('Error during submission:', error);
+    showMessage('שגיאה בעדכון ההערכה', 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+});
+
+/* Handle Class Selection Change */
+classSelect.addEventListener('change', fillTeacherAndStudents);
+
+/* Initialize on Page Load */
+document.addEventListener('DOMContentLoaded', () => {
+  /* Set today's date */
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.value = today;
+  
+  /* Load students data */
   loadStudents();
 });
