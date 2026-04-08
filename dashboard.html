@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>דשבורד מיפוי תלמידים</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>דשבורד מיפוי תלמידים</h1>
+      <p>סקירה מהירה של ההערכות שנשמרו בדפדפן.</p>
+    </header>
+
+    <section class="card stats-grid">
+      <div>
+        <h3>סה"כ הערכות</h3>
+        <p id="totalCount">0</p>
+      </div>
+      <div>
+        <h3>תקשורת - אדום</h3>
+        <p id="commCount1">0</p>
+      </div>
+      <div>
+        <h3>תקשורת - צהוב</h3>
+        <p id="commCount2">0</p>
+      </div>
+      <div>
+        <h3>תקשורת - ירוק</h3>
+        <p id="commCount3">0</p>
+      </div>
+      <div>
+        <h3>רווחה - ירוק</h3>
+        <p id="wellGreen">0</p>
+      </div>
+      <div>
+        <h3>רווחה - צהוב</h3>
+        <p id="wellYellow">0</p>
+      </div>
+      <div>
+        <h3>רווחה - אדום</h3>
+        <p id="wellRed">0</p>
+      </div>
+    </section>
+
+    <section class="card filters">
+      <h2>סינון נתונים</h2>
+      <div class="filter-row">
+        <label for="filterClass">כיתה / מחנכת</label>
+        <select id="filterClass"><option value="all">הכל</option></select>
+      </div>
+      <div class="filter-row">
+        <label for="filterCommunication">ציר התקשורת</label>
+        <select id="filterCommunication">
+          <option value="all">הכל</option>
+          <option value="1">רמה 1</option>
+          <option value="2">רמה 2</option>
+          <option value="3">רמה 3</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <label for="filterWellbeing">ציר הרווחה</label>
+        <select id="filterWellbeing">
+          <option value="all">הכל</option>
+          <option value="green">ירוק</option>
+          <option value="yellow">צהוב</option>
+          <option value="red">אדום</option>
+        </select>
+      </div>
+      <button id="exportBtn" class="primary-btn">ייצא ל-CSV</button>
+    </section>
+
+    <section class="card table-card">
+      <h2>טבלת הערכות</h2>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>כיתה / מחנכת</th>
+              <th>מחנכת / מחנך</th>
+              <th>תלמיד/ה</th>
+              <th>תאריך</th>
+              <th>תקשורת</th>
+              <th>רווחה</th>
+              <th>נורות אדומות</th>
+            </tr>
+          </thead>
+          <tbody id="submissionsTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="dashboard.js"></script>
+</body>
+</html>

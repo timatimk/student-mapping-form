@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>שאלון מיפוי תלמידים</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>שאלון מיפוי תלמידים</h1>
+      <p>מילוי ראשוני אחרי חזרה מבית הספר וחופשת פסח.</p>
+    </header>
+
+    <section class="card">
+      <h2>פרטי שאלון</h2>
+
+      <label for="classSelect">כיתה / מחנכת</label>
+      <select id="classSelect"></select>
+
+      <label for="teacherName">מחנכת / מחנך</label>
+      <input id="teacherName" type="text" readonly />
+
+      <label for="studentSelect">שם התלמיד /ה</label>
+      <select id="studentSelect"></select>
+
+      <label for="dateInput">תאריך יעדכון</label>
+      <input id="dateInput" type="date" />
+
+      <label for="communicationLevel">ציר התקשורת</label>
+      <select id="communicationLevel">
+        <option value="1">רמה 1 - מנותק קשר</option>
+        <option value="2">רמה 2 - קשר רופף</option>
+        <option value="3">רמה 3 - נמצא בקשר</option>
+      </select>
+
+      <label for="wellbeingLevel">ציר הרווחה הנפשית</label>
+      <select id="wellbeingLevel">
+        <option value="green">ירוק - מתפקד, חיוני, משתף פעולה</option>
+        <option value="yellow">צהוב - עייפות, דאגה או ירידה במוטיבציה</option>
+        <option value="red">אדום - סימני מצוקה בולטים או משבר</option>
+      </select>
+
+      <label for="strengthNote">זיהוי כוחות</label>
+      <textarea id="strengthNote" rows="3" placeholder="מי התלמיד/ה שהפתיע/ה לטובה ביכולת ההתמודדות?"></textarea>
+
+      <label for="alertNote">נורות אדומות</label>
+      <textarea id="alertNote" rows="3" placeholder="האם יש תלמיד/ה שדורש/ת מעקב או התערבות מיידית?"></textarea>
+
+      <label for="familyNote">המעטפת המשפחתית</label>
+      <textarea id="familyNote" rows="3" placeholder="האם ידוע על שינוי משמעותי במצב המשפחה? אבטלה, מילואים, חולי וכדומה."></textarea>
+
+      <label for="generalNote">הערות נוספות</label>
+      <textarea id="generalNote" rows="4" placeholder="תצפיות, צרכים, המלצות או מידע חשוב נוסף"></textarea>
+
+      <button id="submitBtn" class="primary-btn">שמור תצפית</button>
+      <div id="message" class="message"></div>
+    </section>
+
+    <section class="card short-info">
+      <h2>קישורים</h2>
+      <p>לאחר שמירת הערכה, ניתן לעבור ל-<a href="dashboard.html">דשבורד</a> לצפייה בסיכומים.</p>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
