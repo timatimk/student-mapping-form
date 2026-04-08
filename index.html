@@ -9,7 +9,7 @@
 <body>
   <main class="container">
     <header>
-      <img src="logo.svg" alt="ברנקו וייס - חינוך משנה חברה" class="logo" />
+      <img src="logo.png" alt="ברנקו וייס - חינוך משנה חברה" class="logo" />
       <h1>שאלון מיפוי תלמידים</h1>
       <p>מילוי ראשוני אחרי חזרה מבית הספר וחופשת פסח.</p>
     </header>
@@ -29,28 +29,88 @@
       <label for="dateInput">תאריך יעדכון</label>
       <input id="dateInput" type="date" />
 
-      <label for="communicationLevel">ציר התקשורת</label>
-      <select id="communicationLevel">
-        <option value="1">רמה 1 - מנותק קשר</option>
-        <option value="2">רמה 2 - קשר רופף</option>
-        <option value="3">רמה 3 - נמצא בקשר</option>
-      </select>
+      <!-- ציר תקשורת -->
+      <div class="question-section">
+        <h3>ציר תקשורת</h3>
+        <div class="option-grid">
+          <div class="option-card green" data-value="3" data-section="communication" tabindex="0">
+            <h4>ירוק</h4>
+            <p>נמצא בקשר - נוכח במפגשים, עונה באופן עקבי, מעורב</p>
+          </div>
+          <div class="option-card yellow" data-value="2" data-section="communication" tabindex="0">
+            <h4>צהוב</h4>
+            <p>קשר רופף - עונה להודעות מדי פעם, אך לא משתתף בלמידה/מפגשים</p>
+          </div>
+          <div class="option-card red" data-value="1" data-section="communication" tabindex="0">
+            <h4>אדום</h4>
+            <p>מנותק קשר - אין מענה בטלפון/הודעות מעל 3 ימים</p>
+          </div>
+        </div>
+        <input type="hidden" id="communicationLevel" />
+      </div>
 
-      <label for="wellbeingLevel">ציר הרווחה הנפשית</label>
-      <select id="wellbeingLevel">
-        <option value="green">ירוק - מתפקד, חיוני, משתף פעולה</option>
-        <option value="yellow">צהוב - עייפות, דאגה או ירידה במוטיבציה</option>
-        <option value="red">אדום - סימני מצוקה בולטים או משבר</option>
-      </select>
+      <!-- ציר הרווחה הנפשית -->
+      <div class="question-section">
+        <h3>ציר הרווחה הנפשית</h3>
+        <div class="option-grid">
+          <div class="option-card green" data-value="green" data-section="wellbeing" tabindex="0">
+            <h4>ירוק</h4>
+            <p>מתפקד, חיוני, משתף פעולה</p>
+          </div>
+          <div class="option-card yellow" data-value="yellow" data-section="wellbeing" tabindex="0">
+            <h4>צהוב</h4>
+            <p>ניכרת עייפות, דאגה או ירידה במוטיבציה (דורש מעקב)</p>
+          </div>
+          <div class="option-card red" data-value="red" data-section="wellbeing" tabindex="0">
+            <h4>אדום</h4>
+            <p>סימני מצוקה בולטים, נסיגה משמעותית, דיווח על משבר בבית</p>
+          </div>
+        </div>
+        <input type="hidden" id="wellbeingLevel" />
+      </div>
+
+      <!-- המעטפת המשפחתית -->
+      <div class="question-section">
+        <h3>המעטפת המשפחתית - האם ידוע על שינוי משמעותי במצב המשפחתי (אבטלה, מילואים, חולי)?</h3>
+        <div class="option-grid">
+          <div class="option-card green" data-value="stable" data-section="family" tabindex="0">
+            <h4>מעטפת יציבה</h4>
+            <p>הבית מהווה עוגן. יש דמות הורית פנויה, קיימת שגרה ביתית ותמיכה רגשית וכלכלית</p>
+          </div>
+          <div class="option-card yellow" data-value="cracked" data-section="family" tabindex="0">
+            <h4>מעטפת סדוקה</h4>
+            <p>הבית חווה עומס (מילואים ארוכים, הורה אחד מנהל הכל לבד, לחץ כלכלי מתון). ההורים פחות פנויים לילד.</p>
+          </div>
+          <div class="option-card red" data-value="crisis" data-section="family" tabindex="0">
+            <h4>מעטפת במשבר</h4>
+            <p>שינוי משמעותי (אבטלה, חולי של בן משפחה, אבל, קושי בתפקוד ההורי). הבית אינו מהווה כרגע גורם תומך עבור התלמיד.</p>
+          </div>
+        </div>
+        <input type="hidden" id="familyLevel" />
+      </div>
+
+      <!-- נורות אדומות -->
+      <div class="question-section">
+        <h3>נורות אדומות</h3>
+        <div class="option-grid">
+          <div class="option-card green" data-value="normal" data-section="alerts" tabindex="0">
+            <h4>שגרתי</h4>
+            <p>אין סימני אזהרה מיוחדים. המעקב הוא במסגרת עבודת המחנכת בלבד.</p>
+          </div>
+          <div class="option-card yellow" data-value="counselor" data-section="alerts" tabindex="0">
+            <h4>דרוש מעקב יועצת</h4>
+            <p>סימנים מעוררי דאגה שאינם דחופים (שינוי קל בהתנהגות, הסתגרות הדרגתית). דורש "בדיקת דופק" של היועצת בשבוע הקרוב.</p>
+          </div>
+          <div class="option-card red" data-value="urgent" data-section="alerts" tabindex="0">
+            <h4>קריאה לעזרה/מיידי</h4>
+            <p>נורה אדומה בוהקת. דיווח על משבר, פגיעה עצמית, או נתק מוחלט ופתאומי. מחייב התערבות של יועצת/טיפול בתוך 24 שעות.</p>
+          </div>
+        </div>
+        <input type="hidden" id="alertLevel" />
+      </div>
 
       <label for="strengthNote">זיהוי כוחות</label>
       <textarea id="strengthNote" rows="3" placeholder="מי התלמיד/ה שהפתיע/ה לטובה ביכולת ההתמודדות?"></textarea>
-
-      <label for="alertNote">נורות אדומות</label>
-      <textarea id="alertNote" rows="3" placeholder="האם יש תלמיד/ה שדורש/ת מעקב או התערבות מיידית?"></textarea>
-
-      <label for="familyNote">המעטפת המשפחתית</label>
-      <textarea id="familyNote" rows="3" placeholder="האם ידוע על שינוי משמעותי במצב המשפחה? אבטלה, מילואים, חולי וכדומה."></textarea>
 
       <label for="generalNote">הערות נוספות</label>
       <textarea id="generalNote" rows="4" placeholder="תצפיות, צרכים, המלצות או מידע חשוב נוסף"></textarea>

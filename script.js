@@ -5,9 +5,9 @@ const studentSelect = document.getElementById('studentSelect');
 const dateInput = document.getElementById('dateInput');
 const communicationLevel = document.getElementById('communicationLevel');
 const wellbeingLevel = document.getElementById('wellbeingLevel');
+const familyLevel = document.getElementById('familyLevel');
+const alertLevel = document.getElementById('alertLevel');
 const strengthNote = document.getElementById('strengthNote');
-const alertNote = document.getElementById('alertNote');
-const familyNote = document.getElementById('familyNote');
 const generalNote = document.getElementById('generalNote');
 const submitBtn = document.getElementById('submitBtn');
 const message = document.getElementById('message');
@@ -42,6 +42,22 @@ function validateForm() {
 
   if (!dateInput.value) {
     errors.push('יש להזין תאריך');
+  }
+
+  if (!communicationLevel.value) {
+    errors.push('יש לבחור רמת תקשורת');
+  }
+
+  if (!wellbeingLevel.value) {
+    errors.push('יש לבחור רמת רווחה נפשית');
+  }
+
+  if (!familyLevel.value) {
+    errors.push('יש לבחור מצב משפחתי');
+  }
+
+  if (!alertLevel.value) {
+    errors.push('יש לבחור סטטוס נורות אדומות');
   }
 
   if (errors.length > 0) {
@@ -126,12 +142,17 @@ function saveSubmission(submission) {
 
 /* Clear Form */
 function clearForm() {
-  communicationLevel.value = '1';
-  wellbeingLevel.value = 'green';
+  communicationLevel.value = '';
+  wellbeingLevel.value = '';
+  familyLevel.value = '';
+  alertLevel.value = '';
   strengthNote.value = '';
-  alertNote.value = '';
-  familyNote.value = '';
   generalNote.value = '';
+  
+  // Clear selected states from option cards
+  document.querySelectorAll('.option-card.selected').forEach(card => {
+    card.classList.remove('selected');
+  });
   
   if (classesData.length > 0) {
     classSelect.selectedIndex = 0;
@@ -168,9 +189,9 @@ submitBtn.addEventListener('click', (event) => {
       date: dateInput.value,
       communicationLevel: communicationLevel.value,
       wellbeingLevel: wellbeingLevel.value,
+      familyStatus: familyLevel.value,
+      alerts: alertLevel.value,
       strengths: strengthNote.value.trim(),
-      alerts: alertNote.value.trim(),
-      familyStatus: familyNote.value.trim(),
       notes: generalNote.value.trim(),
       savedAt: new Date().toISOString()
     };
@@ -200,6 +221,41 @@ submitBtn.addEventListener('click', (event) => {
 
 /* Handle Class Selection Change */
 classSelect.addEventListener('change', fillTeacherAndStudents);
+
+/* Handle Option Card Clicks */
+document.addEventListener('click', (event) => {
+  const card = event.target.closest('.option-card');
+  if (!card) return;
+  
+  const section = card.dataset.section;
+  const value = card.dataset.value;
+  const hiddenInput = document.getElementById(`${section}Level`);
+  
+  if (!hiddenInput) return;
+  
+  // Remove selected class from siblings in the same section
+  const siblings = card.parentElement.querySelectorAll(`[data-section="${section}"]`);
+  siblings.forEach(sibling => sibling.classList.remove('selected'));
+  
+  // Add selected class to clicked card
+  card.classList.add('selected');
+  
+  // Update hidden input
+  hiddenInput.value = value;
+  
+  hideMessage();
+});
+
+/* Handle Keyboard Navigation for Option Cards */
+document.addEventListener('keydown', (event) => {
+  const card = event.target.closest('.option-card');
+  if (!card) return;
+  
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    card.click();
+  }
+});
 
 /* Initialize on Page Load */
 document.addEventListener('DOMContentLoaded', () => {

@@ -50,7 +50,7 @@ function buildTable(submissions) {
   
   if (submissions.length === 0) {
     const emptyRow = document.createElement('tr');
-    emptyRow.innerHTML = '<td colspan="7" style="text-align: center; color: #999; padding: 20px;">אין נתונים לתצוגה</td>';
+    emptyRow.innerHTML = '<td colspan="8" style="text-align: center; color: #999; padding: 20px;">אין נתונים לתצוגה</td>';
     submissionsTable.appendChild(emptyRow);
     return;
   }
@@ -59,12 +59,13 @@ function buildTable(submissions) {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${item.className} - ${item.teacherName}</td>
-      <td>${item.teacherName}</td>
       <td>${item.studentName}</td>
       <td>${formatDate(item.date)}</td>
       <td>${getCommunicationLabel(item.communicationLevel)}</td>
       <td>${getWellbeingLabel(item.wellbeingLevel)}</td>
-      <td>${item.alerts ? item.alerts.substring(0, 50) + '...' : '-'}</td>
+      <td>${getFamilyLabel(item.familyStatus)}</td>
+      <td>${getAlertLabel(item.alerts)}</td>
+      <td>${item.strengths ? item.strengths.substring(0, 30) + '...' : '-'}</td>
     `;
     submissionsTable.appendChild(row);
   });
@@ -100,6 +101,26 @@ function getWellbeingLabel(value) {
   return labels[value] || '-';
 }
 
+/* Get Family Status Label */
+function getFamilyLabel(value) {
+  const labels = {
+    'stable': 'מעטפת יציבה',
+    'cracked': 'מעטפת סדוקה',
+    'crisis': 'מעטפת במשבר'
+  };
+  return labels[value] || '-';
+}
+
+/* Get Alert Level Label */
+function getAlertLabel(value) {
+  const labels = {
+    'normal': 'שגרתי',
+    'counselor': 'דרוש מעקב יועצת',
+    'urgent': 'קריאה לעזרה/מיידי'
+  };
+  return labels[value] || '-';
+}
+
 /* Filter Submissions Based on Selected Criteria */
 function filterSubmissions(submissions) {
   return submissions.filter(item => {
@@ -129,9 +150,9 @@ function filterSubmissions(submissions) {
 /* Update Statistics Cards */
 function updateStats(submissions) {
   totalCount.textContent = submissions.length;
-  commCount1.textContent = submissions.filter(item => item.communicationLevel === '1').length;
+  commCount1.textContent = submissions.filter(item => item.communicationLevel === '3').length;
   commCount2.textContent = submissions.filter(item => item.communicationLevel === '2').length;
-  commCount3.textContent = submissions.filter(item => item.communicationLevel === '3').length;
+  commCount3.textContent = submissions.filter(item => item.communicationLevel === '1').length;
   wellGreen.textContent = submissions.filter(item => item.wellbeingLevel === 'green').length;
   wellYellow.textContent = submissions.filter(item => item.wellbeingLevel === 'yellow').length;
   wellRed.textContent = submissions.filter(item => item.wellbeingLevel === 'red').length;
