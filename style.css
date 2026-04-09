@@ -47,22 +47,66 @@ body {
   padding: 0 var(--spacing-md);
 }
 
-.page-banner {
-  margin: var(--spacing-lg) 0 0 0;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-}
-
-.page-banner img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-}
-
 .page-footer {
   text-align: left;
   padding: var(--spacing-sm) var(--spacing-md);
+}
+
+.page-footer p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-family: 'Brush Script MT', 'Segoe Script', 'Bradley Hand', cursive, sans-serif;
+}
+
+header {
+  background: linear-gradient(180deg, rgba(13, 74, 109, 0.88), rgba(26, 95, 138, 0.82)),
+    url('https://photos.app.goo.gl/z2VwWM76jpidEWtP8') center/cover no-repeat;
+  color: #fff;
+  padding: var(--spacing-lg) 0;
+  min-height: 290px;
+  border-bottom: 4px solid var(--accent-turquoise);
+  margin-bottom: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(0, 169, 204, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+header .logo {
+  width: 90px;
+  height: auto;
+  margin-bottom: var(--spacing-md);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: slideDown var(--transition-normal) ease-out;
+}
+
+header h1 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: clamp(1.9rem, 5vw, 2.6rem);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  animation: slideUp var(--transition-normal) ease-out;
+}
+
+header p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.95rem, 2vw, 1rem);
+  font-weight: 300;
+  animation: slideUp var(--transition-normal) ease-out 0.05s both;
 }
 
 .page-footer p {
