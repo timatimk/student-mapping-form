@@ -7,7 +7,6 @@ const communicationLevel = document.getElementById('communicationLevel');
 const wellbeingLevel = document.getElementById('wellbeingLevel');
 const familyLevel = document.getElementById('familyLevel');
 const alertLevel = document.getElementById('alertLevel');
-const strengthNote = document.getElementById('strengthNote');
 const generalNote = document.getElementById('generalNote');
 const submitBtn = document.getElementById('submitBtn');
 const message = document.getElementById('message');
@@ -146,7 +145,6 @@ function clearForm() {
   wellbeingLevel.value = '';
   familyLevel.value = '';
   alertLevel.value = '';
-  strengthNote.value = '';
   generalNote.value = '';
   
   // Clear selected states from option cards
@@ -191,7 +189,6 @@ submitBtn.addEventListener('click', (event) => {
       wellbeingLevel: wellbeingLevel.value,
       familyStatus: familyLevel.value,
       alerts: alertLevel.value,
-      strengths: strengthNote.value.trim(),
       notes: generalNote.value.trim(),
       savedAt: new Date().toISOString()
     };
