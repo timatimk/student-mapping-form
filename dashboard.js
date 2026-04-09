@@ -466,11 +466,11 @@ function exportCSV(submissions) {
   }
 }
 
-tableSearch.addEventListener('input', refreshDashboard);
-filterClass.addEventListener('change', refreshDashboard);
-filterCommunication.addEventListener('change', refreshDashboard);
-filterWellbeing.addEventListener('change', refreshDashboard);
-exportBtn.addEventListener('click', () => {
+if (tableSearch) tableSearch.addEventListener('input', refreshDashboard);
+if (typeof filterClass !== 'undefined' && filterClass) filterClass.addEventListener('change', refreshDashboard);
+if (typeof filterCommunication !== 'undefined' && filterCommunication) filterCommunication.addEventListener('change', refreshDashboard);
+if (typeof filterWellbeing !== 'undefined' && filterWellbeing) filterWellbeing.addEventListener('change', refreshDashboard);
+if (typeof exportBtn !== 'undefined' && exportBtn) exportBtn.addEventListener('click', () => {
   const submissions = getSavedSubmissions();
   exportCSV(applyFilters(submissions));
 });
