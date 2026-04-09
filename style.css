@@ -115,46 +115,6 @@ header p {
   font-family: 'Segoe Script', 'Bradley Hand', cursive, sans-serif;
 }
 
-header {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-medium) 100%);
-  color: #fff;
-  padding: var(--spacing-lg) 0;
-  border-bottom: 4px solid var(--accent-turquoise);
-  margin-bottom: var(--spacing-xl);
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
-}
-
-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, rgba(0, 169, 204, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  pointer-events: none;
-}
-
-header .logo {
-  width: 80px;
-  height: auto;
-  margin-bottom: var(--spacing-md);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-  animation: slideDown var(--transition-normal) ease-out;
-}
-
-header h1 {
-  margin: 0 0 var(--spacing-xs) 0;
-  font-size: clamp(1.8rem, 5vw, 2.4rem);
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.5px;
-  animation: slideUp var(--transition-normal) ease-out;
-}
-
 header p {
   margin: 0;
   color: rgba(255, 255, 255, 0.85);
