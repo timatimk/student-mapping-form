@@ -67,11 +67,13 @@ header {
   flex-direction: column;
   align-items: flex-end;
   justify-content: flex-end;
-  padding: var(--spacing-lg) var(--spacing-lg) 48px var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-xl) 48px var(--spacing-xl);
   min-height: 280px;
   aspect-ratio: 16/4;
+  width: 100%;
+  max-width: 1020px;
+  margin: 0 auto var(--spacing-xl) auto;
   border-bottom: 4px solid var(--accent-turquoise);
-  margin-bottom: var(--spacing-xl);
   box-shadow: var(--shadow-lg);
   position: relative;
   overflow: hidden;
@@ -90,7 +92,7 @@ header::before {
 
 header h1 {
   margin: 0 0 var(--spacing-xs) 0;
-  padding-right: var(--spacing-md);
+  padding-right: var(--spacing-xl);
   font-size: clamp(1.6rem, 5vw, 2.3rem);
   font-weight: 700;
   color: #fff;
@@ -103,7 +105,7 @@ header h1 {
 header p {
   order: 2;
   margin: 0 0 var(--spacing-sm) 0;
-  padding-right: var(--spacing-md);
+  padding-right: var(--spacing-xl);
   color: rgba(255, 255, 255, 0.9);
   font-size: clamp(0.85rem, 2vw, 0.95rem);
   font-weight: 300;
@@ -115,7 +117,7 @@ header .logo {
   width: 60px;
   height: auto;
   margin-top: var(--spacing-sm);
-  padding-right: var(--spacing-md);
+  padding-right: var(--spacing-xl);
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
   animation: slideDown var(--transition-normal) ease-out;
   order: 3;
@@ -705,24 +707,25 @@ tbody tr:last-child td {
   }
 
   header {
-    padding: var(--spacing-md) var(--spacing-md) 40px var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg) 40px var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
     min-height: 220px;
+    max-width: 100%;
   }
 
   header h1 {
     font-size: clamp(1.3rem, 4vw, 1.8rem);
-    padding-right: var(--spacing-sm);
+    padding-right: var(--spacing-lg);
   }
 
   header p {
     font-size: clamp(0.75rem, 1.8vw, 0.85rem);
-    padding-right: var(--spacing-sm);
+    padding-right: var(--spacing-lg);
   }
 
   header .logo {
     width: 50px;
-    padding-right: var(--spacing-sm);
+    padding-right: var(--spacing-lg);
   }
 
   .question-section {
@@ -778,25 +781,27 @@ tbody tr:last-child td {
   }
 
   header {
-    padding: var(--spacing-md) var(--spacing-sm) 30px var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-md) 30px var(--spacing-md);
     margin-bottom: var(--spacing-md);
-    min-height: 180px;
+    min-height: 220px;
+    aspect-ratio: auto;
+    max-width: 100%;
   }
 
   header h1 {
     font-size: 1.2rem;
-    padding-right: var(--spacing-xs);
+    padding-right: var(--spacing-md);
   }
 
   header p {
     font-size: 0.7rem;
-    padding-right: var(--spacing-xs);
+    padding-right: var(--spacing-md);
   }
 
   header .logo {
     width: 40px;
     margin-bottom: 0;
-    padding-right: var(--spacing-xs);
+    padding-right: var(--spacing-md);
   }
 
   .question-section {
