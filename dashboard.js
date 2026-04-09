@@ -134,6 +134,7 @@ function groupByClass(submissions) {
   return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label, 'he'));
 }
 
+// הודעה ברורה אם אין נתונים
 function renderClassTiles(submissions) {
   classGrid.innerHTML = '';
   const classCounts = groupByClass(submissions).reduce((acc, group) => {
@@ -146,8 +147,10 @@ function renderClassTiles(submissions) {
     return;
   }
 
+  let hasData = false;
   classList.forEach(cls => {
     const count = classCounts[cls.label] || 0;
+    if (count > 0) hasData = true;
     const tile = document.createElement('a');
     tile.className = 'class-card';
     tile.href = `class-dashboard.html?class=${encodeURIComponent(cls.label)}`;
@@ -160,6 +163,9 @@ function renderClassTiles(submissions) {
     `;
     classGrid.appendChild(tile);
   });
+  if (!hasData) {
+    classGrid.innerHTML += '<p style="color:#888; margin-top:16px;">אין עדיין נתונים להצגה. מלאו טופס כדי לראות גרפים וסטטיסטיקות.</p>';
+  }
 }
 
 function buildBarChart(title, buckets, total) {
@@ -184,6 +190,11 @@ function buildBarChart(title, buckets, total) {
 
 function renderDistributionCharts(submissions) {
   distributionGrid.innerHTML = '';
+  if (!submissions.length) {
+    distributionGrid.innerHTML = '<p style="color:#888;">אין עדיין נתונים להצגה. מלאו טופס כדי לראות גרפים.</p>';
+    return;
+  }
+
   const total = submissions.length;
 
   const communication = [
