@@ -60,7 +60,7 @@ body {
 }
 
 header {
-  background: url('images/student-mapping-banner.png') center/cover no-repeat;
+  background: url('images/student-mapping-banner.png') center/100% 100% no-repeat;
   color: #fff;
   padding: var(--spacing-lg) 0;
   min-height: 320px;
@@ -82,20 +82,12 @@ header::before {
   pointer-events: none;
 }
 
-header .logo {
-  width: 90px;
-  height: auto;
-  margin-bottom: var(--spacing-md);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  animation: slideDown var(--transition-normal) ease-out;
-}
-
-header .logo {
-  width: 90px;
-  height: auto;
-  margin-bottom: var(--spacing-md);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  animation: slideDown var(--transition-normal) ease-out;
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 header h1 {
@@ -105,6 +97,21 @@ header h1 {
   color: #fff;
   letter-spacing: -0.5px;
   animation: slideUp var(--transition-normal) ease-out;
+  order: 1;
+}
+
+header p {
+  order: 2;
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+header .logo {
+  width: 70px;
+  height: auto;
+  margin-top: var(--spacing-md);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: slideDown var(--transition-normal) ease-out;
+  order: 3;
 }
 
 header p {
@@ -120,12 +127,8 @@ header p {
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-family: 'Segoe Script', 'Bradley Hand', cursive, sans-serif;
-}
-
-header p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: clamp(0.9rem, 2vw, 1rem);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.95rem, 2vw, 1rem);
   font-weight: 300;
   animation: slideUp var(--transition-normal) ease-out 0.05s both;
 }
