@@ -488,3 +488,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadClassList();
   refreshDashboard();
 });
+
+// איפוס כל הנתונים בלחיצה על כפתור
+const resetDataBtn = document.getElementById('resetDataBtn');
+if (resetDataBtn) {
+  resetDataBtn.addEventListener('click', () => {
+    if (confirm('האם אתה בטוח שברצונך למחוק את כל הנתונים שנשמרו? פעולה זו אינה הפיכה!')) {
+      localStorage.removeItem('studentMappingSubmissions');
+      location.reload();
+    }
+  });
+}
