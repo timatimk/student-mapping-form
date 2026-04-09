@@ -1,4 +1,3 @@
-/* Dashboard Elements */
 const filterClass = document.getElementById('filterClass');
 const filterCommunication = document.getElementById('filterCommunication');
 const filterWellbeing = document.getElementById('filterWellbeing');
@@ -11,8 +10,14 @@ const commCount3 = document.getElementById('commCount3');
 const wellGreen = document.getElementById('wellGreen');
 const wellYellow = document.getElementById('wellYellow');
 const wellRed = document.getElementById('wellRed');
+const classGrid = document.getElementById('classGrid');
+const distributionGrid = document.getElementById('distributionGrid');
+const comparisonGrid = document.getElementById('comparisonGrid');
+const tableSearch = document.getElementById('tableSearch');
+const sortableHeaders = Array.from(document.querySelectorAll('th.sortable'));
 
-/* Get Saved Submissions from LocalStorage */
+let currentSort = { key: 'date', direction: 'desc' };
+
 function getSavedSubmissions() {
   try {
     const raw = localStorage.getItem('studentMappingSubmissions');
@@ -23,19 +28,65 @@ function getSavedSubmissions() {
   }
 }
 
-/* Populate Filter Dropdown with Unique Classes */
+function sanitizeValue(value) {
+  return (value || '').toString().toLowerCase();
+}
+
+function getCommunicationLabel(level) {
+  const labels = {
+    '1': 'רמה 1 - מנותק קשר',
+    '2': 'רמה 2 - קשר רופף',
+    '3': 'רמה 3 - נמצא בקשר'
+  };
+  return labels[level] || '-';
+}
+
+function getWellbeingLabel(value) {
+  const labels = {
+    'green': 'ירוק',
+    'yellow': 'צהוב',
+    'red': 'אדום'
+  };
+  return labels[value] || '-';
+}
+
+function getFamilyLabel(value) {
+  const labels = {
+    'stable': 'מעטפת יציבה',
+    'cracked': 'מעטפת סדוקה',
+    'crisis': 'מעטפת במשבר'
+  };
+  return labels[value] || '-';
+}
+
+function getAlertLabel(value) {
+  const labels = {
+    'normal': 'שגרתי',
+    'counselor': 'דרוש מעקב יועצת',
+    'urgent': 'קריאה לעזרה/מיידי'
+  };
+  return labels[value] || '-';
+}
+
+function formatDate(dateString) {
+  try {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('he-IL');
+  } catch (e) {
+    return dateString;
+  }
+}
+
 function setFilterOptions(submissions) {
   const titles = new Set(['all']);
-  
   submissions.forEach(item => {
     titles.add(`${item.className} - ${item.teacherName}`);
   });
-  
+
   filterClass.innerHTML = '<option value="all">הכל</option>';
-  
   Array.from(titles)
     .filter(title => title !== 'all')
-    .sort()
+    .sort((a, b) => a.localeCompare(b, 'he'))
     .forEach(title => {
       const option = document.createElement('option');
       option.value = title;
@@ -44,18 +95,266 @@ function setFilterOptions(submissions) {
     });
 }
 
-/* Build Table with Submissions */
+function groupByClass(submissions) {
+  const groups = {};
+
+  submissions.forEach(item => {
+    const label = `${item.className} - ${item.teacherName}`;
+    if (!groups[label]) {
+      groups[label] = {
+        label,
+        count: 0,
+        communication: { '1': 0, '2': 0, '3': 0 },
+        wellbeing: { green: 0, yellow: 0, red: 0 },
+        family: { stable: 0, cracked: 0, crisis: 0 },
+        alerts: { normal: 0, counselor: 0, urgent: 0 }
+      };
+    }
+
+    const group = groups[label];
+    group.count += 1;
+    if (item.communicationLevel) group.communication[item.communicationLevel] += 1;
+    if (item.wellbeingLevel) group.wellbeing[item.wellbeingLevel] += 1;
+    if (item.familyStatus) group.family[item.familyStatus] += 1;
+    if (item.alerts) group.alerts[item.alerts] += 1;
+  });
+
+  return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label, 'he'));
+}
+
+function renderClassTiles(submissions) {
+  classGrid.innerHTML = '';
+  const classGroups = groupByClass(submissions);
+
+  if (!classGroups.length) {
+    classGrid.innerHTML = '<p style="color:#555;">עדיין לא נוספו הערכות. מלא לפחות טופס אחד כדי לראות כיתות כאן.</p>';
+    return;
+  }
+
+  classGroups.forEach(group => {
+    const tile = document.createElement('a');
+    tile.className = 'class-card';
+    tile.href = `class-dashboard.html?class=${encodeURIComponent(group.label)}`;
+    tile.innerHTML = `
+      <div>
+        <h3>${group.label}</h3>
+        <p>${group.count} הערכות</p>
+      </div>
+      <p>לחץ לפרטים לכיתה זו</p>
+    `;
+    classGrid.appendChild(tile);
+  });
+}
+
+function buildBarChart(title, buckets, total) {
+  const card = document.createElement('div');
+  card.className = 'chart-card';
+  card.innerHTML = `<h3>${title}</h3>`;
+
+  buckets.forEach(bucket => {
+    const percent = total ? Math.round((bucket.count / total) * 100) : 0;
+    const row = document.createElement('div');
+    row.className = 'chart-row';
+    row.innerHTML = `
+      <span class="chart-label">${bucket.label}</span>
+      <span class="chart-bar" aria-hidden="true"><span class="chart-fill" style="width:${percent}%"></span></span>
+      <span class="chart-value">${bucket.count} (${percent}%)</span>
+    `;
+    card.appendChild(row);
+  });
+
+  return card;
+}
+
+function renderDistributionCharts(submissions) {
+  distributionGrid.innerHTML = '';
+  const total = submissions.length;
+
+  const communication = [
+    { label: 'ירוק', count: submissions.filter(item => item.communicationLevel === '3').length },
+    { label: 'צהוב', count: submissions.filter(item => item.communicationLevel === '2').length },
+    { label: 'אדום', count: submissions.filter(item => item.communicationLevel === '1').length }
+  ];
+
+  const wellbeing = [
+    { label: 'ירוק', count: submissions.filter(item => item.wellbeingLevel === 'green').length },
+    { label: 'צהוב', count: submissions.filter(item => item.wellbeingLevel === 'yellow').length },
+    { label: 'אדום', count: submissions.filter(item => item.wellbeingLevel === 'red').length }
+  ];
+
+  const family = [
+    { label: 'מעטפת יציבה', count: submissions.filter(item => item.familyStatus === 'stable').length },
+    { label: 'מעטפת סדוקה', count: submissions.filter(item => item.familyStatus === 'cracked').length },
+    { label: 'מעטפת במשבר', count: submissions.filter(item => item.familyStatus === 'crisis').length }
+  ];
+
+  const alerts = [
+    { label: 'שגרתי', count: submissions.filter(item => item.alerts === 'normal').length },
+    { label: 'דרוש מעקב יועצת', count: submissions.filter(item => item.alerts === 'counselor').length },
+    { label: 'קריאה לעזרה/מיידי', count: submissions.filter(item => item.alerts === 'urgent').length }
+  ];
+
+  distributionGrid.appendChild(buildBarChart('ציר התקשורת', communication, total));
+  distributionGrid.appendChild(buildBarChart('ציר הרווחה', wellbeing, total));
+  distributionGrid.appendChild(buildBarChart('מעטפת משפחתית', family, total));
+  distributionGrid.appendChild(buildBarChart('נורות אדומות', alerts, total));
+}
+
+function buildComparisonCard(title, categories, classData) {
+  const card = document.createElement('div');
+  card.className = 'comparison-card';
+  const titleElement = document.createElement('h3');
+  titleElement.textContent = title;
+  card.appendChild(titleElement);
+
+  const grid = document.createElement('div');
+  grid.className = 'comparison-table';
+
+  const headerRow = document.createElement('div');
+  headerRow.className = 'comparison-header';
+  headerRow.innerHTML = `<span>כיתה</span>${categories.map(item => `<span>${item.label}</span>`).join('')}`;
+  grid.appendChild(headerRow);
+
+  classData.forEach(group => {
+    const row = document.createElement('div');
+    row.className = 'comparison-row';
+    const values = categories.map(item => `<span>${group[item.key] || 0}</span>`).join('');
+    row.innerHTML = `<span>${group.label}</span>${values}`;
+    grid.appendChild(row);
+  });
+
+  card.appendChild(grid);
+  return card;
+}
+
+function renderComparisonCharts(submissions) {
+  comparisonGrid.innerHTML = '';
+  const groups = groupByClass(submissions);
+
+  if (!groups.length) {
+    comparisonGrid.innerHTML = '<p style="color:#555;">אין כיתות להצגה.</p>';
+    return;
+  }
+
+  comparisonGrid.appendChild(buildComparisonCard('השוואת תקשורת לפי כיתה', [
+    { label: 'ירוק', key: 'communication.3' },
+    { label: 'צהוב', key: 'communication.2' },
+    { label: 'אדום', key: 'communication.1' }
+  ], groups.map(g => ({
+    label: g.label,
+    'communication.3': g.communication['3'],
+    'communication.2': g.communication['2'],
+    'communication.1': g.communication['1']
+  }))));
+
+  comparisonGrid.appendChild(buildComparisonCard('השוואת רווחה לפי כיתה', [
+    { label: 'ירוק', key: 'wellbeing.green' },
+    { label: 'צהוב', key: 'wellbeing.yellow' },
+    { label: 'אדום', key: 'wellbeing.red' }
+  ], groups.map(g => ({
+    label: g.label,
+    'wellbeing.green': g.wellbeing.green,
+    'wellbeing.yellow': g.wellbeing.yellow,
+    'wellbeing.red': g.wellbeing.red
+  }))));
+
+  comparisonGrid.appendChild(buildComparisonCard('השוואת מעטפת משפחתית לפי כיתה', [
+    { label: 'יציבה', key: 'family.stable' },
+    { label: 'סדוקה', key: 'family.cracked' },
+    { label: 'משבר', key: 'family.crisis' }
+  ], groups.map(g => ({
+    label: g.label,
+    'family.stable': g.family.stable,
+    'family.cracked': g.family.cracked,
+    'family.crisis': g.family.crisis
+  }))));
+
+  comparisonGrid.appendChild(buildComparisonCard('השוואת נורות אדומות לפי כיתה', [
+    { label: 'שגרתי', key: 'alerts.normal' },
+    { label: 'יועצת', key: 'alerts.counselor' },
+    { label: 'מיידי', key: 'alerts.urgent' }
+  ], groups.map(g => ({
+    label: g.label,
+    'alerts.normal': g.alerts.normal,
+    'alerts.counselor': g.alerts.counselor,
+    'alerts.urgent': g.alerts.urgent
+  }))));
+}
+
+function applyFilters(submissions) {
+  const classFiltered = submissions.filter(item => {
+    const classFilter = filterClass.value;
+    const commFilter = filterCommunication.value;
+    const wellFilter = filterWellbeing.value;
+
+    if (classFilter !== 'all' && `${item.className} - ${item.teacherName}` !== classFilter) {
+      return false;
+    }
+    if (commFilter !== 'all' && item.communicationLevel !== commFilter) {
+      return false;
+    }
+    if (wellFilter !== 'all' && item.wellbeingLevel !== wellFilter) {
+      return false;
+    }
+    return true;
+  });
+
+  const search = sanitizeValue(tableSearch.value);
+  if (!search) return classFiltered;
+
+  return classFiltered.filter(item => {
+    const fields = [
+      item.className,
+      item.teacherName,
+      item.studentName,
+      item.date,
+      getCommunicationLabel(item.communicationLevel),
+      getWellbeingLabel(item.wellbeingLevel),
+      getFamilyLabel(item.familyStatus),
+      getAlertLabel(item.alerts),
+      item.strengths,
+      item.notes
+    ].map(sanitizeValue);
+    return fields.some(field => field.includes(search));
+  });
+}
+
+function sortSubmissions(submissions) {
+  return submissions.slice().sort((a, b) => {
+    const key = currentSort.key;
+    let aValue = a[key] || '';
+    let bValue = b[key] || '';
+
+    if (key === 'date') {
+      aValue = new Date(`${aValue}T00:00:00`).getTime();
+      bValue = new Date(`${bValue}T00:00:00`).getTime();
+    } else if (key === 'communicationLevel') {
+      aValue = parseInt(aValue, 10) || 0;
+      bValue = parseInt(bValue, 10) || 0;
+    } else {
+      aValue = sanitizeValue(aValue);
+      bValue = sanitizeValue(bValue);
+    }
+
+    if (aValue < bValue) return currentSort.direction === 'asc' ? -1 : 1;
+    if (aValue > bValue) return currentSort.direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
 function buildTable(submissions) {
   submissionsTable.innerHTML = '';
-  
-  if (submissions.length === 0) {
+  const filtered = applyFilters(submissions);
+  const sorted = sortSubmissions(filtered);
+
+  if (!sorted.length) {
     const emptyRow = document.createElement('tr');
-    emptyRow.innerHTML = '<td colspan="8" style="text-align: center; color: #999; padding: 20px;">אין נתונים לתצוגה</td>';
+    emptyRow.innerHTML = '<td colspan="8" style="text-align:center; color:#999; padding:20px;">אין נתונים לתצוגה</td>';
     submissionsTable.appendChild(emptyRow);
     return;
   }
-  
-  submissions.forEach(item => {
+
+  sorted.forEach(item => {
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${item.className} - ${item.teacherName}</td>
@@ -71,83 +370,6 @@ function buildTable(submissions) {
   });
 }
 
-/* Format Date to Hebrew Locale */
-function formatDate(dateString) {
-  try {
-    const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString('he-IL');
-  } catch (e) {
-    return dateString;
-  }
-}
-
-/* Get Communication Level Label */
-function getCommunicationLabel(level) {
-  const labels = {
-    '1': 'רמה 1 - מנותק קשר',
-    '2': 'רמה 2 - קשר רופף',
-    '3': 'רמה 3 - נמצא בקשר'
-  };
-  return labels[level] || '-';
-}
-
-/* Get Wellbeing Level Label */
-function getWellbeingLabel(value) {
-  const labels = {
-    'green': 'ירוק',
-    'yellow': 'צהוב',
-    'red': 'אדום'
-  };
-  return labels[value] || '-';
-}
-
-/* Get Family Status Label */
-function getFamilyLabel(value) {
-  const labels = {
-    'stable': 'מעטפת יציבה',
-    'cracked': 'מעטפת סדוקה',
-    'crisis': 'מעטפת במשבר'
-  };
-  return labels[value] || '-';
-}
-
-/* Get Alert Level Label */
-function getAlertLabel(value) {
-  const labels = {
-    'normal': 'שגרתי',
-    'counselor': 'דרוש מעקב יועצת',
-    'urgent': 'קריאה לעזרה/מיידי'
-  };
-  return labels[value] || '-';
-}
-
-/* Filter Submissions Based on Selected Criteria */
-function filterSubmissions(submissions) {
-  return submissions.filter(item => {
-    const classFilter = filterClass.value;
-    const commFilter = filterCommunication.value;
-    const wellFilter = filterWellbeing.value;
-
-    /* Filter by class */
-    if (classFilter !== 'all' && `${item.className} - ${item.teacherName}` !== classFilter) {
-      return false;
-    }
-    
-    /* Filter by communication level */
-    if (commFilter !== 'all' && item.communicationLevel !== commFilter) {
-      return false;
-    }
-    
-    /* Filter by wellbeing level */
-    if (wellFilter !== 'all' && item.wellbeingLevel !== wellFilter) {
-      return false;
-    }
-    
-    return true;
-  });
-}
-
-/* Update Statistics Cards */
 function updateStats(submissions) {
   totalCount.textContent = submissions.length;
   commCount1.textContent = submissions.filter(item => item.communicationLevel === '3').length;
@@ -158,16 +380,25 @@ function updateStats(submissions) {
   wellRed.textContent = submissions.filter(item => item.wellbeingLevel === 'red').length;
 }
 
-/* Refresh Dashboard with Current Data */
+function updateSortHeaders() {
+  sortableHeaders.forEach(header => {
+    header.classList.remove('sorted-asc', 'sorted-desc');
+    if (header.dataset.key === currentSort.key) {
+      header.classList.add(currentSort.direction === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+}
+
 function refreshDashboard() {
   const submissions = getSavedSubmissions();
   setFilterOptions(submissions);
-  const filtered = filterSubmissions(submissions);
-  buildTable(filtered);
+  renderClassTiles(submissions);
+  renderDistributionCharts(submissions);
+  renderComparisonCharts(submissions);
   updateStats(submissions);
+  buildTable(submissions);
 }
 
-/* Export Submissions to CSV */
 function exportCSV(submissions) {
   if (submissions.length === 0) {
     alert('אין נתונים לייצוא');
@@ -200,12 +431,9 @@ function exportCSV(submissions) {
     item.notes || ''
   ]);
 
-  /* Build CSV content */
   const csvContent = [header, ...rows]
-    .map(row => row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(','))
-    .join('\n');
+    .map(row => row.map(cell => `"${(cell || '').toString().replace(/"/g, '""')}"`).join(',')).join('\n');
 
-  /* Create and download file */
   try {
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -222,15 +450,35 @@ function exportCSV(submissions) {
   }
 }
 
-/* Event Listeners */
-exportBtn.addEventListener('click', () => {
-  const submissions = getSavedSubmissions();
-  exportCSV(filterSubmissions(submissions));
-});
-
+tableSearch.addEventListener('input', refreshDashboard);
 filterClass.addEventListener('change', refreshDashboard);
 filterCommunication.addEventListener('change', refreshDashboard);
 filterWellbeing.addEventListener('change', refreshDashboard);
+exportBtn.addEventListener('click', () => {
+  const submissions = getSavedSubmissions();
+  exportCSV(applyFilters(submissions));
+});
 
-/* Initialize Dashboard on Page Load */
-document.addEventListener('DOMContentLoaded', refreshDashboard);
+sortableHeaders.forEach(header => {
+  header.addEventListener('click', () => {
+    const key = header.dataset.key;
+    if (!key) return;
+    if (currentSort.key === key) {
+      currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort.key = key;
+      currentSort.direction = 'asc';
+    }
+    updateSortHeaders();
+    refreshDashboard();
+  });
+});
+
+function getSearchFiltered(submissions) {
+  return applyFilters(submissions);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateSortHeaders();
+  refreshDashboard();
+});

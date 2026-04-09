@@ -14,7 +14,12 @@
       <p>סקירה מהירה של ההערכות שנשמרו בדפדפן.</p>
     </header>
 
-    <section class="card stats-grid">
+    <section class="card class-grid-card">
+      <h2>כיתות</h2>
+      <div class="class-grid" id="classGrid"></div>
+    </section>
+
+    <section class="card stats-grid summary-grid">
       <div>
         <h3>סה"כ הערכות</h3>
         <p id="totalCount">0</p>
@@ -45,7 +50,7 @@
       </div>
     </section>
 
-    <section class="card filters">
+    <section class="card filters advanced-filters">
       <h2>סינון נתונים</h2>
       <div class="filter-row">
         <label for="filterClass">כיתה / מחנכת</label>
@@ -55,9 +60,9 @@
         <label for="filterCommunication">ציר התקשורת</label>
         <select id="filterCommunication">
           <option value="all">הכל</option>
-          <option value="1">רמה 1</option>
-          <option value="2">רמה 2</option>
-          <option value="3">רמה 3</option>
+          <option value="3">ירוק</option>
+          <option value="2">צהוב</option>
+          <option value="1">אדום</option>
         </select>
       </div>
       <div class="filter-row">
@@ -69,23 +74,37 @@
           <option value="red">אדום</option>
         </select>
       </div>
+      <div class="filter-row">
+        <label for="tableSearch">חיפוש חכם</label>
+        <input id="tableSearch" type="text" placeholder="חפש תלמיד, כיתה, מחנכת, הערות..." />
+      </div>
       <button id="exportBtn" class="primary-btn">ייצא ל-CSV</button>
     </section>
 
+    <section class="card charts-section">
+      <h2>התפלגות כללית</h2>
+      <div class="distribution-grid" id="distributionGrid"></div>
+    </section>
+
+    <section class="card comparison-section">
+      <h2>השוואת כיתות</h2>
+      <div class="comparison-grid" id="comparisonGrid"></div>
+    </section>
+
     <section class="card table-card">
-      <h2>טבלת הערכות</h2>
+      <h2>טבלת נתונים גולמיים</h2>
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>כיתה / מחנכת</th>
-              <th>תלמיד/ה</th>
-              <th>תאריך</th>
-              <th>תקשורת</th>
-              <th>רווחה</th>
-              <th>מעטפת משפחתית</th>
-              <th>נורות אדומות</th>
-              <th>כוחות</th>
+              <th class="sortable" data-key="className">כיתה / מחנכת</th>
+              <th class="sortable" data-key="studentName">תלמיד/ה</th>
+              <th class="sortable" data-key="date">תאריך</th>
+              <th class="sortable" data-key="communicationLevel">תקשורת</th>
+              <th class="sortable" data-key="wellbeingLevel">רווחה</th>
+              <th class="sortable" data-key="familyStatus">מעטפת משפחתית</th>
+              <th class="sortable" data-key="alerts">נורות אדומות</th>
+              <th class="sortable" data-key="strengths">כוחות</th>
             </tr>
           </thead>
           <tbody id="submissionsTable"></tbody>

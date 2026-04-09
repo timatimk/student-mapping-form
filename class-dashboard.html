@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>דשבורד כיתה</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <img src="logo.png" alt="ברנקו וייס - חינוך משנה חברה" class="logo" />
+      <h1 id="classTitle">דשבורד כיתה</h1>
+      <p id="classSubtitle">סקירה של נתוני הכיתה שנבחרה.</p>
+    </header>
+
+    <section class="card class-summary-card">
+      <div class="table-controls">
+        <a href="dashboard.html" class="primary-btn secondary-btn">חזרה לדשבורד הראשי</a>
+        <div id="classOverview"></div>
+      </div>
+      <div class="stats-grid">
+        <div>
+          <h3>סה"כ הערכות בכיתה</h3>
+          <p id="classTotalCount">0</p>
+        </div>
+        <div>
+          <h3>תקשורת - אדום</h3>
+          <p id="classCommRed">0</p>
+        </div>
+        <div>
+          <h3>תקשורת - צהוב</h3>
+          <p id="classCommYellow">0</p>
+        </div>
+        <div>
+          <h3>תקשורת - ירוק</h3>
+          <p id="classCommGreen">0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card charts-section">
+      <h2>התפלגות כיתה</h2>
+      <div class="distribution-grid" id="classDistributionGrid"></div>
+    </section>
+
+    <section class="card table-card">
+      <h2>נתונים גולמיים לכיתה</h2>
+      <div class="table-controls">
+        <input id="classSearch" type="text" placeholder="חיפוש תלמיד, הערות או שדה..." />
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th class="sortable" data-key="studentName">תלמיד/ה</th>
+              <th class="sortable" data-key="date">תאריך</th>
+              <th class="sortable" data-key="communicationLevel">תקשורת</th>
+              <th class="sortable" data-key="wellbeingLevel">רווחה</th>
+              <th class="sortable" data-key="familyStatus">מעטפת משפחתית</th>
+              <th class="sortable" data-key="alerts">נורות אדומות</th>
+              <th class="sortable" data-key="strengths">כוחות</th>
+              <th>הערות</th>
+            </tr>
+          </thead>
+          <tbody id="classTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="class-dashboard.js"></script>
+</body>
+</html>
