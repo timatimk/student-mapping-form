@@ -199,11 +199,8 @@ submitBtn.addEventListener('click', (event) => {
       showMessage('המידע נשמר בהצלחה! ✓', 'success');
       clearForm();
       
-      /* Re-enable button after a brief delay */
-      setTimeout(() => {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }, 1500);
+      // רענון הדף מיד לאחר שמירה מוצלחת
+      location.reload();
     } else {
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
