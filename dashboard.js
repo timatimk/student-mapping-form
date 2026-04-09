@@ -71,23 +71,31 @@ function formatDate(dateString) {
   }
 }
 
-function setFilterOptions(submissions) {
-  const titles = new Set(['all']);
-  classList.forEach(cls => titles.add(cls.label));
-  submissions.forEach(item => {
-    titles.add(`${item.className} - ${item.teacherName}`);
-  });
+function getFamilyLabel(value) {
+  const labels = {
+    'stable': 'מעטפת יציבה',
+    'cracked': 'מעטפת סדוקה',
+    'crisis': 'מעטפת במשבר'
+  };
+  return labels[value] || '-';
+}
 
-  filterClass.innerHTML = '<option value="all">הכל</option>';
-  Array.from(titles)
-    .filter(title => title !== 'all')
-    .sort((a, b) => a.localeCompare(b, 'he'))
-    .forEach(title => {
-      const option = document.createElement('option');
-      option.value = title;
-      option.textContent = title;
-      filterClass.appendChild(option);
-    });
+function getAlertLabel(value) {
+  const labels = {
+    'normal': 'שגרתי',
+    'counselor': 'דרוש מעקב יועצת',
+    'urgent': 'קריאה לעזרה/מיידי'
+  };
+  return labels[value] || '-';
+}
+
+function formatDate(dateString) {
+  try {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString('he-IL');
+  } catch (e) {
+    return dateString;
+  }
 }
 
 async function loadClassList() {
@@ -408,7 +416,6 @@ function updateSortHeaders() {
 
 function refreshDashboard() {
   const submissions = getSavedSubmissions();
-  setFilterOptions(submissions);
   renderClassTiles(submissions);
   renderDistributionCharts(submissions);
   renderComparisonCharts(submissions);
