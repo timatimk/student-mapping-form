@@ -6,7 +6,7 @@ const dateInput = document.getElementById('dateInput');
 const communicationLevel = document.getElementById('communicationLevel');
 const wellbeingLevel = document.getElementById('wellbeingLevel');
 const familyLevel = document.getElementById('familyLevel');
-const alertLevel = document.getElementById('alertLevel');
+const alertsLevel = document.getElementById('alertsLevel');
 const generalNote = document.getElementById('generalNote');
 const submitBtn = document.getElementById('submitBtn');
 const message = document.getElementById('message');
@@ -55,7 +55,7 @@ function validateForm() {
     errors.push('יש לבחור מצב משפחתי');
   }
 
-  if (!alertLevel.value) {
+  if (!alertsLevel.value) {
     errors.push('יש לבחור סטטוס נורות אדומות');
   }
 
@@ -144,7 +144,7 @@ function clearForm() {
   communicationLevel.value = '';
   wellbeingLevel.value = '';
   familyLevel.value = '';
-  alertLevel.value = '';
+  alertsLevel.value = '';
   generalNote.value = '';
   
   // Clear selected states from option cards
@@ -188,7 +188,7 @@ submitBtn.addEventListener('click', (event) => {
       communicationLevel: communicationLevel.value,
       wellbeingLevel: wellbeingLevel.value,
       familyStatus: familyLevel.value,
-      alerts: alertLevel.value,
+      alerts: alertsLevel.value,
       notes: generalNote.value.trim(),
       savedAt: new Date().toISOString()
     };
