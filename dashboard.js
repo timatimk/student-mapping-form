@@ -3,19 +3,13 @@ const filterCommunication = document.getElementById('filterCommunication');
 const filterWellbeing = document.getElementById('filterWellbeing');
 const exportBtn = document.getElementById('exportBtn');
 const submissionsTable = document.getElementById('submissionsTable');
-const totalCount = document.getElementById('totalCount');
-const commCount1 = document.getElementById('commCount1');
-const commCount2 = document.getElementById('commCount2');
-const commCount3 = document.getElementById('commCount3');
-const wellGreen = document.getElementById('wellGreen');
-const wellYellow = document.getElementById('wellYellow');
-const wellRed = document.getElementById('wellRed');
 const classGrid = document.getElementById('classGrid');
 const distributionGrid = document.getElementById('distributionGrid');
 const comparisonGrid = document.getElementById('comparisonGrid');
 const tableSearch = document.getElementById('tableSearch');
 const sortableHeaders = Array.from(document.querySelectorAll('th.sortable'));
 
+let classList = [];
 let currentSort = { key: 'date', direction: 'desc' };
 
 function getSavedSubmissions() {
@@ -79,6 +73,7 @@ function formatDate(dateString) {
 
 function setFilterOptions(submissions) {
   const titles = new Set(['all']);
+  classList.forEach(cls => titles.add(cls.label));
   submissions.forEach(item => {
     titles.add(`${item.className} - ${item.teacherName}`);
   });
@@ -93,6 +88,23 @@ function setFilterOptions(submissions) {
       option.textContent = title;
       filterClass.appendChild(option);
     });
+}
+
+async function loadClassList() {
+  try {
+    const response = await fetch('data/students.json');
+    if (!response.ok) throw new Error('Failed to load student data');
+    const data = await response.json();
+    const classes = Array.isArray(data.classes) ? data.classes : data;
+    classList = classes.map(item => ({
+      label: item.label || `${item.className} - ${item.teacherName}`,
+      className: item.className,
+      teacherName: item.teacherName
+    })).sort((a, b) => a.label.localeCompare(b.label, 'he'));
+  } catch (error) {
+    console.error('Unable to load class list:', error);
+    classList = [];
+  }
 }
 
 function groupByClass(submissions) {
@@ -124,21 +136,25 @@ function groupByClass(submissions) {
 
 function renderClassTiles(submissions) {
   classGrid.innerHTML = '';
-  const classGroups = groupByClass(submissions);
+  const classCounts = groupByClass(submissions).reduce((acc, group) => {
+    acc[group.label] = group.count;
+    return acc;
+  }, {});
 
-  if (!classGroups.length) {
-    classGrid.innerHTML = '<p style="color:#555;">עדיין לא נוספו הערכות. מלא לפחות טופס אחד כדי לראות כיתות כאן.</p>';
+  if (!classList.length) {
+    classGrid.innerHTML = '<p style="color:#555;">אין רשימת כיתות זמינה כרגע.</p>';
     return;
   }
 
-  classGroups.forEach(group => {
+  classList.forEach(cls => {
+    const count = classCounts[cls.label] || 0;
     const tile = document.createElement('a');
     tile.className = 'class-card';
-    tile.href = `class-dashboard.html?class=${encodeURIComponent(group.label)}`;
+    tile.href = `class-dashboard.html?class=${encodeURIComponent(cls.label)}`;
     tile.innerHTML = `
       <div>
-        <h3>${group.label}</h3>
-        <p>${group.count} הערכות</p>
+        <h3>${cls.label}</h3>
+        <p>${count} הערכות</p>
       </div>
       <p>לחץ לפרטים לכיתה זו</p>
     `;
@@ -370,16 +386,6 @@ function buildTable(submissions) {
   });
 }
 
-function updateStats(submissions) {
-  totalCount.textContent = submissions.length;
-  commCount1.textContent = submissions.filter(item => item.communicationLevel === '3').length;
-  commCount2.textContent = submissions.filter(item => item.communicationLevel === '2').length;
-  commCount3.textContent = submissions.filter(item => item.communicationLevel === '1').length;
-  wellGreen.textContent = submissions.filter(item => item.wellbeingLevel === 'green').length;
-  wellYellow.textContent = submissions.filter(item => item.wellbeingLevel === 'yellow').length;
-  wellRed.textContent = submissions.filter(item => item.wellbeingLevel === 'red').length;
-}
-
 function updateSortHeaders() {
   sortableHeaders.forEach(header => {
     header.classList.remove('sorted-asc', 'sorted-desc');
@@ -395,7 +401,6 @@ function refreshDashboard() {
   renderClassTiles(submissions);
   renderDistributionCharts(submissions);
   renderComparisonCharts(submissions);
-  updateStats(submissions);
   buildTable(submissions);
 }
 
@@ -478,7 +483,8 @@ function getSearchFiltered(submissions) {
   return applyFilters(submissions);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   updateSortHeaders();
+  await loadClassList();
   refreshDashboard();
 });

@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>דשבורד מיפוי תלמידים</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .class-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .class-card {
+      min-height: 120px;
+      padding: 18px;
+      border-radius: 16px;
+      background: #f8fbff;
+      border: 1px solid rgba(0, 90, 180, 0.12);
+      box-shadow: 0 8px 20px rgba(37, 82, 151, 0.06);
+      text-decoration: none;
+      color: #003168;
+    }
+    .class-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 90, 180, 0.22);
+    }
+  </style>
 </head>
 <body>
   <main class="container">
@@ -17,37 +39,6 @@
     <section class="card class-grid-card">
       <h2>כיתות</h2>
       <div class="class-grid" id="classGrid"></div>
-    </section>
-
-    <section class="card stats-grid summary-grid">
-      <div>
-        <h3>סה"כ הערכות</h3>
-        <p id="totalCount">0</p>
-      </div>
-      <div>
-        <h3>תקשורת - אדום</h3>
-        <p id="commCount1">0</p>
-      </div>
-      <div>
-        <h3>תקשורת - צהוב</h3>
-        <p id="commCount2">0</p>
-      </div>
-      <div>
-        <h3>תקשורת - ירוק</h3>
-        <p id="commCount3">0</p>
-      </div>
-      <div>
-        <h3>רווחה - ירוק</h3>
-        <p id="wellGreen">0</p>
-      </div>
-      <div>
-        <h3>רווחה - צהוב</h3>
-        <p id="wellYellow">0</p>
-      </div>
-      <div>
-        <h3>רווחה - אדום</h3>
-        <p id="wellRed">0</p>
-      </div>
     </section>
 
     <section class="card filters advanced-filters">
@@ -79,11 +70,6 @@
         <input id="tableSearch" type="text" placeholder="חפש תלמיד, כיתה, מחנכת, הערות..." />
       </div>
       <button id="exportBtn" class="primary-btn">ייצא ל-CSV</button>
-    </section>
-
-    <section class="card charts-section">
-      <h2>התפלגות כללית</h2>
-      <div class="distribution-grid" id="distributionGrid"></div>
     </section>
 
     <section class="card comparison-section">
