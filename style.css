@@ -48,7 +48,7 @@ body {
 }
 
 .page-footer {
-  text-align: right;
+  text-align: left;
   padding: var(--spacing-lg);
   display: block;
   visibility: visible;
@@ -117,7 +117,7 @@ header p {
 }
 
 header .logo {
-  width: 60px;
+  width: 120px;
   height: auto;
   margin-top: var(--spacing-sm);
   padding-right: var(--spacing-xl);
@@ -778,7 +778,7 @@ tbody tr:last-child td {
   header {
     padding: var(--spacing-md) var(--spacing-md) 30px var(--spacing-md);
     margin-bottom: var(--spacing-md);
-    min-height: 220px;
+    min-height: 110px;
     aspect-ratio: auto;
     max-width: 100%;
   }
@@ -794,7 +794,7 @@ tbody tr:last-child td {
   }
 
   header .logo {
-    width: 40px;
+    width: 80px;
     margin-bottom: 0;
     padding-right: var(--spacing-md);
   }
